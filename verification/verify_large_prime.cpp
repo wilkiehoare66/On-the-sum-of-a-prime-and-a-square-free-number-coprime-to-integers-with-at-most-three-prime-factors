@@ -1,3 +1,25 @@
+// ============================================================================
+// verify_large_prime.cpp
+//
+// Finite verification, for n in (RANGE_START, RANGE_END], that every integer
+// in range is a sum of a prime and a square-free number (the unconstrained
+// Estermann-Dudek statement, extended over the computational range). For each
+// n the search marks n = p + s using a strided set of primes p and small
+// square-free s, then checks any unmarked n directly against a table of small
+// square-free numbers.
+//
+// Primality backend, selected at compile time:
+//
+//   default          -- inline deterministic Miller-Rabin with the twelve
+//                        Sorenson-Webster bases, valid unconditionally for
+//                        every n < 3.317 * 10^24.
+//     g++ -O2 -std=c++17 -fopenmp verify_large_prime.cpp -o verify_large_prime
+//
+//   -DUSE_BPSW       -- Baillie-PSW with Montgomery multiplication from
+//                        prime64.hpp (faster, conjectural). Needs C++20.
+//     g++ -O2 -std=c++20 -fopenmp -DUSE_BPSW verify_large_prime.cpp -o verify_large_prime_bpsw
+// ============================================================================
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,17 +41,29 @@ using u64 = uint64_t;
 // Configuration
 const i64 RANGE_START = 4810000000LL;       // 4.81 * 10^9 (already verified up to here)
 const i64 RANGE_END = 2000000000000LL;      // 2 * 10^12
-const i64 CHUNK_SIZE = 10000000LL;          // 10^7 (same as original)
-const i64 SQFREE_SIEVE_LIMIT = 100000;      // 10^5 (same as original)
-const i64 SQFREE_CHECK_LIMIT = 10000;       // 10^4 (same as original)
-const i64 PRIME_GAP = 10000;                // 10^4 (same as original)
+const i64 CHUNK_SIZE = 10000000LL;          // 10^7
+const i64 SQFREE_SIEVE_LIMIT = 100000;      // 10^5
+const i64 SQFREE_CHECK_LIMIT = 10000;       // 10^4
+const i64 PRIME_GAP = 10000;                // 10^4
 
 const string RESULTS_FILE = "lemma61_results.csv";
 const string CHECKPOINT_FILE = "lemma61_checkpoint.csv";
 
 const int NUM_THREADS = 6;  // Number of parallel threads to use
 
-// Primality Testing (Miller-Rabin, deterministic for n < 3.3 * 10^24)
+// ============================================================================
+// Primality testing
+// ============================================================================
+
+#ifdef USE_BPSW
+
+#include "prime64.hpp"
+using prime64::is_prime;
+using prime64::next_prime;
+using prime64::prev_prime;
+
+#else
+
 u64 mod_pow(u64 base, u64 exp, u64 mod) {
     u64 result = 1;
     base %= mod;
@@ -77,7 +111,6 @@ bool is_prime(u64 n) {
     return true;
 }
 
-// Prime Navigation
 u64 next_prime(u64 n) {
     if (n < 2) return 2;
     n++;
@@ -95,6 +128,8 @@ u64 prev_prime(u64 n) {
     while (!is_prime(n)) n -= 2;
     return n;
 }
+
+#endif  // USE_BPSW
 
 // Square-free Check
 bool is_squarefree(u64 n) {
@@ -138,7 +173,7 @@ void generate_squarefrees() {
     }
 }
 
-// Core Verification Function (direct translation of verify_ft)
+// Core verification function
 struct ChunkResult {
     i64 chunk_start;
     i64 chunk_end;
@@ -155,7 +190,7 @@ ChunkResult verify_chunk(i64 from_me, i64 to_me) {
     
     auto t_start = chrono::high_resolution_clock::now();
     
-    // Phase 1: Mark verified using sampled primes (same as original)
+    // Phase 1: mark n as verified using a strided set of primes
     unordered_set<i64> verified;
     u64 np = prev_prime(from_me);
     
@@ -169,7 +204,7 @@ ChunkResult verify_chunk(i64 from_me, i64 to_me) {
         np = next_prime(np + PRIME_GAP);
     }
     
-    // Phase 2: Check unmarked integers (same as original)
+    // Phase 2: check any unmarked n against the small square-free table
     for (i64 m = from_me; m <= to_me; m++) {
         if (verified.find(m) == verified.end()) {
             result.unmarked_count++;
