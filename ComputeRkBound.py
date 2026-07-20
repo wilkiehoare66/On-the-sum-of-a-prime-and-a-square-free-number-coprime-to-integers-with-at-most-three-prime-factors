@@ -14,7 +14,9 @@ omega(k)):
           [the j=a=1 modulus-1 term uses Broadbent: 0.375/(log n)^3]
   (II)  = ( prod_{q|k} (q-2)/(q-1) + 2/(1-2A) )
           ( sum_{c<a<=Z,(a,k)=1} mu^2(a)/phi(a^2) + 4/Z )
-  (III) = ( k n^{-2A} + sqrt(k) n^{-A} ) log n.
+  (III) = ( k n^{-2A} + sqrt(k) n^{-A} + n^{A-1}/sqrt(k) ) log n.
+          [the three pieces are the Sigma_4 tail (d > n^A/sqrt(k)) and the
+           bad-gcd range (d,n)>1 contributing n^{A-1}/sqrt(k); see Prop 4.1 proof]
 
 c_theta(m) is the SHARP per-modulus error bound for theta(n;m,a): for each modulus
 the smallest available of
@@ -356,10 +358,19 @@ def tail_constant(k, c, mu, spf):
 
 def err_bound(n, A, k, alpha, first_sum_total, tail):
     logn = math.log(n)
+    # (III): the two trivial ranges of the Moebius sieve.
+    #   * Sigma_4 (d > n^A/sqrt(k)):    (k n^{-2A} + sqrt(k) n^{-A}) log n
+    #   * Sigma_3 (bad gcd, (d,n)>1):   n^{A-1}/sqrt(k) log n  =: E_gcd
+    # The Sigma_3 contribution is bounded in the proof by |Sigma_3| <= (n^A/sqrt(k)) log n
+    # and must be carried explicitly; it is not absorbed into the Sigma_4 bound (the
+    # -1/sqrt(n) and +sqrt(n) boundary pieces there cancel, leaving Sigma_4 alone).
+    sigma4 = (k * n**(-2.0 * A) + math.sqrt(k) * n**(-A)) * logn
+    E_gcd = (n**(A - 1.0) / math.sqrt(k)) * logn
     return (
         first_sum_total
         + (alpha + 2.0 / (1.0 - 2.0 * A)) * tail
-        + (k * n**(-2.0 * A) + math.sqrt(k) * n**(-A)) * logn
+        + sigma4
+        + E_gcd
     )
 
 
