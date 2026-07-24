@@ -385,6 +385,16 @@ def minimize_A(n, k, alpha, first_sum_total, tail):
 def evaluate(n, k, c, mu, phi, bennett, rr_table1, rr_table2, tail, alpha, beta):
     total, broadbent_total, non_m1_total, x0_req = compute_first_sum(n, k, c, mu, phi, bennett, rr_table1, rr_table2)
     A_star, err = minimize_A(n, k, alpha, total, tail)
+    # Proposition 4.1 requires Z >= n^{A}/sqrt(k) (the tail truncation must reach the
+    # trivial-range cutoff). Z is fixed at MAX_TABLE_MOD; assert the hypothesis holds
+    # at the optimised A rather than return a bound whose derivation is unjustified.
+    # Raising Z would only decrease (II), so a failure here means Z must be increased,
+    # never that the bound is unsafe -- but we refuse to certify silently either way.
+    z_required = n ** A_star / math.sqrt(k)
+    if z_required > Z:
+        raise AssertionError(
+            f"Prop 4.1 hypothesis violated for k={k}, n={n:.3e}: need Z >= "
+            f"n^A/sqrt(k) = {z_required:.3e} but Z = {Z}. Increase Z (MAX_TABLE_MOD).")
     return {
         "bound": beta * C_ARTIN - err,
         "A_star": A_star, "err": err, "first_sum": total,
