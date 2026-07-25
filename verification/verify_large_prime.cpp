@@ -33,6 +33,7 @@
 #include <iomanip>
 #include <ctime>
 #include <omp.h>
+#include <sys/stat.h>   // mkdir: outputs are written into results/
 
 using namespace std;
 using i64 = int64_t;
@@ -46,8 +47,8 @@ const i64 SQFREE_SIEVE_LIMIT = 100000;      // 10^5
 const i64 SQFREE_CHECK_LIMIT = 10000;       // 10^4
 const i64 PRIME_GAP = 10000;                // 10^4
 
-const string RESULTS_FILE = "unconstrained_results.csv";
-const string CHECKPOINT_FILE = "unconstrained_checkpoint.csv";
+const string RESULTS_FILE = "results/unconstrained_results.csv";
+const string CHECKPOINT_FILE = "results/unconstrained_checkpoint.csv";
 
 const int NUM_THREADS = 6;  // Number of parallel threads to use
 
@@ -322,6 +323,7 @@ string format_number(i64 n) {
 
 // Main
 int main(int argc, char* argv[]) {
+    mkdir("results", 0755);   // no-op if it already exists
     int num_threads = NUM_THREADS;
     bool resume = false;
     bool test_mode = false;
