@@ -60,6 +60,7 @@
 #include <iomanip>
 #include <ctime>
 #include <omp.h>
+#include <sys/stat.h>   // mkdir: outputs are written into results/
 
 using namespace std;
 using i64 = int64_t;
@@ -74,8 +75,8 @@ const i64 RANGE_END   = 2000000000000LL;    // 2 * 10^12
 const i64 CHUNK_SIZE  = 10000000LL;         // 10^7
 const i64 SMALL_PRIME_LIMIT = 500;          // Small primes < 500 for the quick filter
 
-const string RESULTS_FILE    = "even_results.csv";
-const string CHECKPOINT_FILE = "even_checkpoint.csv";
+const string RESULTS_FILE    = "results/even_results.csv";
+const string CHECKPOINT_FILE = "results/even_checkpoint.csv";
 
 const int NUM_THREADS = 6;
 
@@ -319,7 +320,7 @@ void init_results_file() {
 // Diagnostic log of numbers that needed the exhaustive tier, with the two
 // distinct split primes that cleared each (not required for the proof, but
 // useful for auditing which inputs stressed the fast tiers).
-const string DEEP_CHECKS_FILE = "even_deep_checks.csv";
+const string DEEP_CHECKS_FILE = "results/even_deep_checks.csv";
 
 void init_deep_checks_file() {
     ifstream check(DEEP_CHECKS_FILE);
@@ -485,6 +486,7 @@ void run_self_tests() {
 // ============================================================================
 
 int main(int argc, char* argv[]) {
+    mkdir("results", 0755);   // no-op if it already exists
     if (RANGE_END > 3'300'000'000'000'000'000LL) {
         cerr << "FATAL: RANGE_END exceeds the primality routine's certified range.\n";
         return 1;
