@@ -46,8 +46,8 @@ const i64 SQFREE_SIEVE_LIMIT = 100000;      // 10^5
 const i64 SQFREE_CHECK_LIMIT = 10000;       // 10^4
 const i64 PRIME_GAP = 10000;                // 10^4
 
-const string RESULTS_FILE = "lemma61_results.csv";
-const string CHECKPOINT_FILE = "lemma61_checkpoint.csv";
+const string RESULTS_FILE = "unconstrained_results.csv";
+const string CHECKPOINT_FILE = "unconstrained_checkpoint.csv";
 
 const int NUM_THREADS = 6;  // Number of parallel threads to use
 
@@ -345,7 +345,7 @@ int main(int argc, char* argv[]) {
     
     // Header
     cout << "============================================================" << endl;
-    cout << "Lemma 6.1 Verification (C++ with OpenMP)" << endl;
+    cout << "Unconstrained cross-check: prime + square-free" << endl;
     cout << "============================================================" << endl;
     cout << "Range: " << format_number(RANGE_START) << " to " << format_number(RANGE_END) << endl;
     cout << "Chunk size: " << format_number(CHUNK_SIZE) << endl;
