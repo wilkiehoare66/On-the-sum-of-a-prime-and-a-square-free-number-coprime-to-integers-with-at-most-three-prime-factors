@@ -1,14 +1,31 @@
-# On the sum of a prime and a square-free number coprime to integers with at most three prime factors
+# On the sum of a prime and a square-free number coprime to a fixed modulus with at most three distinct prime factors
 
 Code and data for the computational parts of the paper
 
-> **On the sum of a prime and a square-free number coprime to integers with at most three prime factors**
+> **On the sum of a prime and a square-free number coprime to a fixed modulus with at most three distinct prime factors**
 > W. Hoare, E. Lee, and A. Pearce-Crump.
 
+**Authorship and results of record.** The programs here accompany the manuscript
+above; the mathematics is due to the named authors, and this repository is
+maintained by W. Hoare. Two build/branch choices carry the results of record,
+with faster alternatives provided only as cross-checks:
+
+- the **analytic** constants and thresholds of record are those printed by
+  `ComputeRkBound.py` and `ComputeBqBound.py` and archived in
+  `row_certificates.json`, verified independently by `verify_certificate.py`;
+- the **finite** verification of record uses the default deterministic
+  Miller–Rabin backend (unconditional); the `-DUSE_BPSW` Baillie–PSW builds are
+  faster but only conjecturally exhaustive and are not the results of record.
+
+Proposition, corollary, and lemma numbers cited in this file
+(Proposition 4.1 = the `R_k` bound, Corollary 4.2 = the tabulated `R_m` values,
+Proposition 4.3 = the `B_q` bound, Lemma 5.4 = the small-prime block, Table 2 =
+the twenty three-prime moduli) follow the final manuscript.
+
 The paper's main theorem states that for every integer `k > 1` with at most three
-prime factors, every integer `n ≥ 60` (every even `n ≥ 60` when `k` is even) is a
-sum of a prime and a square-free number coprime to `k`. Its proof has two
-computational halves, and this repository contains both:
+distinct prime factors, every integer `n ≥ 60` (every even `n ≥ 60` when `k` is
+even) is a sum of a prime and a square-free number coprime to `k`. Its proof has
+two computational halves, and this repository contains both:
 
 1. an **analytic** half (Python) that evaluates the explicit lower bound for the
    weighted representation count `R_k(n)` and the upper bound for the divisible
