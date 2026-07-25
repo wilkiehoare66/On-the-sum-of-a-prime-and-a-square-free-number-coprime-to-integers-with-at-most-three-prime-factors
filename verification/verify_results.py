@@ -42,12 +42,16 @@ from math import gcd, isqrt
 # --- verifier metadata: filename, range, stride, kind -----------------------
 # stride 2 = odd verifier records only odd n; stride 1 = every integer.
 VERIFIERS = {
-    "odd":   {"csv": "lemma64_results.csv", "start": 4810000001, "end": 2000000000000,
-              "chunk": 1000000, "stride": 2, "kind": "four_witness"},
-    "even":  {"csv": "lemma63_results.csv", "start": 4810000000, "end": 2000000000000,
-              "chunk": 10000000, "stride": 2, "kind": "two_split"},
-    "large": {"csv": "lemma61_results.csv", "start": 4810000000, "end": 2000000000000,
-              "chunk": 10000000, "stride": 1, "kind": "prime_plus_sqfree"},
+    "odd":  {"csv": "odd_results.csv", "start": 4810000001, "end": 2000000000000,
+             "chunk": 1000000, "stride": 2, "kind": "four_witness"},
+    "even": {"csv": "even_results.csv", "start": 4810000000, "end": 2000000000000,
+             "chunk": 10000000, "stride": 2, "kind": "two_split"},
+    # Not load-bearing for the manuscript: the four-witness / two-split arguments are
+    # uniform in k, so odd+even already cover every k with omega(k)<=3. This is an
+    # independent cross-check of the unconstrained statement over the same range.
+    "unconstrained": {"csv": "unconstrained_results.csv", "start": 4810000000,
+                      "end": 2000000000000, "chunk": 10000000, "stride": 1,
+                      "kind": "prime_plus_sqfree"},
 }
 
 SMALL_PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]
