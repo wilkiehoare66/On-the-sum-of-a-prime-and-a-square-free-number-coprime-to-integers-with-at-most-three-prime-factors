@@ -54,8 +54,15 @@ Everything is deterministic and self-contained; no external services are used.
 ├── rr_theta_table2.tsv        # Ramaré–Rumely √x-bound table 2
 └── verification/              # the finite (C++) verification
     ├── verify_odd.cpp         #   odd n:   four disjoint-support square-free witnesses
+    │                          #            -> odd_results.csv
     ├── verify_even.cpp        #   even n:  two distinct Goldbach splits
-    ├── verify_large_prime.cpp #   prime + square-free (unconstrained), as a cross-check
+    │                          #            -> even_results.csv, even_deep_checks.csv
+    ├── verify_large_prime.cpp #   unconstrained prime + square-free cross-check
+    │                          #            -> unconstrained_results.csv
+    │                          #   (NOT load-bearing: the two arguments above are
+    │                          #    uniform in k and already cover omega(k) <= 3)
+    ├── verify_results.py      #   independent cross-verifier for the results above
+    ├── run_manifest.sh        #   provenance manifest (toolchain, checksums)
     ├── prime64.hpp            #   Baillie–PSW / Montgomery primality backend
     └── results/               #   recorded output of the exhaustive runs
 ```
