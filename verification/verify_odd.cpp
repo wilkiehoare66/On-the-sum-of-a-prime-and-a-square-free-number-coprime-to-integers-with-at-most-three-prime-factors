@@ -68,7 +68,7 @@ using u64 = uint64_t;
 // Configuration
 // ============================================================================
 
-const i64 RANGE_START = 4810000001LL;    // Start after previously verified range
+const i64 RANGE_START = 100001LL;        // Start after Lee--O'Clarey Lem. 2.3 (verified to 1e5)
 const i64 RANGE_END   = 2000000000000LL; // 2 * 10^12
 const i64 CHUNK_SIZE  = 1000000LL;       // 10^6
 
