@@ -3,11 +3,19 @@
 //
 // Finite verification, for even n in (RANGE_START, RANGE_END], of the even
 // branch of the finite computation: every even n in range admits two DISTINCT
-// Goldbach splits n = p1 + p2 = p3 + p4. Four distinct primes are pairwise
-// coprime, so at most three of them can divide any modulus k with omega(k)<=3,
-// leaving at least one split n = p + (n-p) in which the square-free summand
-// n - p is coprime to k. (An even n needs an odd prime summand; both split
-// primes are odd here since n is even and > 4, so this is automatic.)
+// Goldbach splits n = p1 + P1 = p2 + P2. The four primes p1,P1,p2,P2 are
+// distinct, hence pairwise coprime, so a prime factor of a modulus k with
+// omega(k) <= 3 divides at most one of them; at least one of the four, say P,
+// is therefore coprime to k. Then the summand s = P is prime (so square-free)
+// with (s,k) = 1, and n = (n-P) + P is the required representation.
+//
+// This covers EVEN k as well as odd. When k = 2m is even, the chosen P is
+// coprime to k, hence in particular odd (2 | k), so the summand is odd and the
+// degenerate case P = 2 -- which would make s even, not coprime to k -- cannot
+// be the one selected. We do NOT rely on "both primes in a split are odd":
+// that is false in general (n - 2 may be prime), and is not needed. The
+// exclusion of p = 2 comes from the coprimality selection, not from parity of
+// the split.
 //
 // The search proceeds in three tiers of increasing cost, all of which count
 // the SAME object -- distinct-prime Goldbach splits -- so no square-free test
@@ -66,8 +74,8 @@ const i64 RANGE_END   = 2000000000000LL;    // 2 * 10^12
 const i64 CHUNK_SIZE  = 10000000LL;         // 10^7
 const i64 SMALL_PRIME_LIMIT = 500;          // Small primes < 500 for the quick filter
 
-const string RESULTS_FILE    = "lemma63_results.csv";
-const string CHECKPOINT_FILE = "lemma63_checkpoint.csv";
+const string RESULTS_FILE    = "even_results.csv";
+const string CHECKPOINT_FILE = "even_checkpoint.csv";
 
 const int NUM_THREADS = 6;
 
@@ -311,7 +319,7 @@ void init_results_file() {
 // Diagnostic log of numbers that needed the exhaustive tier, with the two
 // distinct split primes that cleared each (not required for the proof, but
 // useful for auditing which inputs stressed the fast tiers).
-const string DEEP_CHECKS_FILE = "lemma63_deep_checks.csv";
+const string DEEP_CHECKS_FILE = "even_deep_checks.csv";
 
 void init_deep_checks_file() {
     ifstream check(DEEP_CHECKS_FILE);
@@ -493,7 +501,7 @@ int main(int argc, char* argv[]) {
     omp_set_num_threads(NUM_THREADS);
 
     cout << "============================================================" << endl;
-    cout << "Lemma 6.3 Verification -- even n" << endl;
+    cout << "Even n: two distinct Goldbach splits" << endl;
     cout << "============================================================" << endl;
     cout << "Range: " << format_number(RANGE_START) << " to " << format_number(RANGE_END) << endl;
     cout << "Chunk size: " << format_number(CHUNK_SIZE) << endl;
