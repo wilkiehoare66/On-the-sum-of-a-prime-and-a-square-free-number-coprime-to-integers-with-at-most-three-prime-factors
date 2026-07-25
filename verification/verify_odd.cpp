@@ -58,6 +58,7 @@
 #include <ctime>
 #include <random>
 #include <omp.h>
+#include <sys/stat.h>   // mkdir: outputs are written into results/
 
 using namespace std;
 using i64 = int64_t;
@@ -71,8 +72,8 @@ const i64 RANGE_START = 4810000001LL;    // Start after previously verified rang
 const i64 RANGE_END   = 2000000000000LL; // 2 * 10^12
 const i64 CHUNK_SIZE  = 1000000LL;       // 10^6
 
-const string RESULTS_FILE    = "odd_results.csv";
-const string CHECKPOINT_FILE = "odd_checkpoint.csv";
+const string RESULTS_FILE    = "results/odd_results.csv";
+const string CHECKPOINT_FILE = "results/odd_checkpoint.csv";
 
 const int NUM_THREADS = 6;
 
@@ -619,6 +620,7 @@ i64 read_checkpoint() {
 // ============================================================================
 
 int main(int argc, char* argv[]) {
+    mkdir("results", 0755);   // no-op if it already exists
     static_assert(SQFREE_TRIAL_BOUND > 0, "sanity");
     if ((__int128)SQFREE_TRIAL_BOUND * SQFREE_TRIAL_BOUND * SQFREE_TRIAL_BOUND <= NMAX) {
         cerr << "FATAL: SQFREE_TRIAL_BOUND^3 must exceed NMAX for a complete square-free test.\n";
