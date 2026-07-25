@@ -42,7 +42,7 @@ from math import gcd, isqrt
 # --- verifier metadata: filename, range, stride, kind -----------------------
 # stride 2 = odd verifier records only odd n; stride 1 = every integer.
 VERIFIERS = {
-    "odd":  {"csv": "odd_results.csv", "start": 4810000001, "end": 2000000000000,
+    "odd":  {"csv": "odd_results.csv", "start": 100001, "end": 2000000000000,
              "chunk": 1000000, "stride": 2, "kind": "four_witness"},
     "even": {"csv": "even_results.csv", "start": 4810000000, "end": 2000000000000,
              "chunk": 10000000, "stride": 2, "kind": "two_split"},
