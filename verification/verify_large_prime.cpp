@@ -382,7 +382,7 @@ int main(int argc, char* argv[]) {
     
     // Build chunk list
     vector<pair<i64, i64>> all_chunks;
-    for (i64 cs = RANGE_START; cs < RANGE_END; cs += CHUNK_SIZE) {
+    for (i64 cs = RANGE_START; cs <= RANGE_END; cs += CHUNK_SIZE) {
         i64 ce = min(cs + CHUNK_SIZE - 1, RANGE_END);
         all_chunks.push_back({cs, ce});
     }
