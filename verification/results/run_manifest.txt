@@ -1,0 +1,93 @@
+================================================================
+RUN MANIFEST  (2026-07-25T09:00:54Z UTC)
+================================================================
+
+-- [1] Source revision --
+(not a git checkout -- record the release tag manually)
+
+-- [2] Toolchain, OS, architecture --
+os/kernel:   Linux 5.15.167.4-microsoft-standard-WSL2 x86_64 GNU/Linux
+hostname:    WilksOMEN
+cpu:         12th Gen Intel(R) Core(TM) i7-12700K
+cores/threads: 6 logical
+OMP_NUM_THREADS: 6
+
+compiler:    g++
+version:     g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+build flags: -O2 -std=c++17 -fopenmp
+backend of record: default (deterministic Miller-Rabin, 12 Sorenson-Webster bases; unconditional).
+                   -DUSE_BPSW builds are conjectural cross-checks, NOT results of record.
+
+-- [3a] Source + header checksums --
+b390abd4a455a19fc936101c90a8efb0dde4f2eedba0d0a4762e65b0e1e23141  verify_odd.cpp
+e2364558da6bf56063ca6806d744b9f110f5aa15338e928b31886006fc81b4cd  verify_even.cpp
+5e71277c532d3e20b47957d116f60544551bc278ca6f1964a53daa993a8966da  verify_large_prime.cpp
+aa76f57c013d4aaa0420341f4bd7846cbff55e4ffd5b8c76afad94dfc6275cad  prime64.hpp
+cbbac34ac145fbf47a021b9c58cc619333c84accc8fa0e3bf48e22c7a02665db  verify_results.py
+
+-- [3b] Executable checksums --
+5062dab18ae761dcbc42813a2149c311e37e84df72706980bd92877d839040d0  verify_odd
+740b4cb963714a8312cdca63ee5b9e4b65e4fa0bbea6afd74bb84ee5ed981a6b  verify_even
+21c73a5392567e2889740adab5298905ccce44782a1940cfec26713ea4c49e91  verify_large_prime
+
+-- [3c] Output (results) checksums + summary --
+(no results/*.csv yet -- run this again after the exhaustive run)
+
+================================================================
+RUN MANIFEST  (2026-07-27T07:41:44Z UTC)
+================================================================
+
+-- [1] Source revision --
+(not a git checkout -- record the release tag manually)
+
+-- [2] Toolchain, OS, architecture --
+os/kernel:   Linux 5.15.167.4-microsoft-standard-WSL2 x86_64 GNU/Linux
+hostname:    WilksOMEN
+cpu:         12th Gen Intel(R) Core(TM) i7-12700K
+cores/threads: 6 logical
+OMP_NUM_THREADS: 6
+
+compiler:    g++
+version:     g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+build flags: -O2 -std=c++17 -fopenmp
+backend of record: default (deterministic Miller-Rabin, 12 Sorenson-Webster bases; unconditional).
+                   -DUSE_BPSW builds are conjectural cross-checks, NOT results of record.
+
+-- [3a] Source + header checksums --
+46e45fa663e17dc835a29c3b5e232f9df19e1972c79f15866236691e45d2cb5d  verify_odd.cpp
+babb8d71e3649a92ee1c2944ffc6d9c90d75c5a8ec7393b649df193d2408fedf  verify_even.cpp
+a1cf5f51991c98bd54cedeb3d33b97362c1a162a9d09f518687461856b8327ca  verify_large_prime.cpp
+aa76f57c013d4aaa0420341f4bd7846cbff55e4ffd5b8c76afad94dfc6275cad  prime64.hpp
+66c0b0ef855387ff25bd4a3454f9d138bb5a06ce1d432e0c77fb0e8e5d9437ca  verify_results.py
+
+-- [3b] Executable checksums --
+5888308027a6b1b878bac7fa2f742dbf27ca9d494519930af8f52300b0abaf92  verify_odd
+740b4cb963714a8312cdca63ee5b9e4b65e4fa0bbea6afd74bb84ee5ed981a6b  verify_even
+21c73a5392567e2889740adab5298905ccce44782a1940cfec26713ea4c49e91  verify_large_prime
+
+-- [3c] Output (results) checksums + summary --
+7d8b93f663f791ce21b12f135a240be26d56e7c93177b5dc75b061c5979ddd31  results/even_checkpoint.csv
+    rows=1  OK=0
+0  exceptions=0
+0
+e0f5195e478fa8e6c0cb8b6eef5d0dd934586f000c723c45b0d03da4443a9014  results/even_deep_checks.csv
+    rows=246244  OK=0
+0  exceptions=0
+0
+d68704a73441cb9d2425d1c1448344077710b86e45e6d8749eb2148216e988e2  results/even_results.csv
+    rows=199521  OK=199520  exceptions=0
+0
+7d8b93f663f791ce21b12f135a240be26d56e7c93177b5dc75b061c5979ddd31  results/odd_checkpoint.csv
+    rows=1  OK=0
+0  exceptions=0
+0
+dd69d75116e1870cd34b36d5517767e2730349083422d5597d90dcee5583cb6b  results/odd_results.csv
+    rows=2000001  OK=2000000  exceptions=0
+0
+d8e916d4459e672b3e9db80b097557334a831d570ac66637780f82a630675558  results/unconstrained_results.csv
+    rows=199521  OK=199520  exceptions=0
+0
+
+NOTE: run  python3 verify_results.py --sample 500  to cross-check coverage,
+      exact count, and re-derived witnesses independently of the C++ code.
+
