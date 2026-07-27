@@ -114,6 +114,14 @@ families carry **separate cutoffs** `(c₁,Z₁)` and `(c₂,Z₂)`, with the se
 family's large range cut at `b > n^A/q` — since `q²b² ≤ n^{2A}` forces
 `b ≤ n^A/q`, not `b ≤ n^A`. Keeping them separate is what makes the bound sound.
 
+**Common Euler product.** Both criteria are normalised over
+`W_n = ∏_{p∤n}(1 − 1/(p(p−1))) ≥ C_Artin`, not over `∏_{p∤kn}`. The identity
+`(q−2)/(q−1) = λ_q(1 − 1/(q(q−1)))` puts the main terms of `R_m` and `B_q` at
+`(∏_{q|m} λ_q)·W_n` and `(1 − λ_q)·W_n`, so `W_n` is an exact common factor of
+the difference and `W_n ≥ C_Artin` is sharp. Normalising over `∏_{p∤kn}` is the
+same algebra with a weaker constant — it discards `∏_{q|k}(1 − 1/(q(q−1)))`,
+which is 0.7728 at `k = 105`.
+
 **Directed rounding.** Every error term is rounded **up** and every lower bound
 **down**, with a safety widening of `10⁻⁹` (more than six orders of magnitude
 above the accumulated double-precision rounding error, which is at the `10⁻¹⁶`
@@ -155,8 +163,8 @@ and re-checks that every slack is positive. It exits nonzero if any record fails
 | --- | --- | --- |
 | `R_15(n)/n ≥ 0.09527` | `python3 ComputeRkBound.py --k 15` | Cor. 4.2 |
 | `R(n)/n` error at `k=1` | `python3 ComputeRkBound.py --k 1` | Prop. 4.1 at `k=1` |
-| `B_13` error | `python3 ComputeBqBound.py --bq 13` | §4 example |
-| `k = 105` threshold `≈ 1.23·10¹¹` | `python3 ComputeBqBound.py --k 105 --certify` | Table 2 |
+| `B_13` error `< 0.02036` | `python3 ComputeBqBound.py --bq 13` | §4 example |
+| `k = 105` cleared at `8·10⁹`, slack `+0.0117` | `python3 ComputeBqBound.py --k 105 --certify` | Table 2 |
 | all twenty rows certified | `python3 make_certificates.py && python3 verify_certificate.py` | Table 2 |
 
 ---
