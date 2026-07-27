@@ -12,6 +12,10 @@ in the small-prime block of Lemma 5.4:
     (split)         R_{q1 q2}(n) > log 2 + B_{q3}(n)                    ==> R_k(n) > 0
     (comparison)    R(n)         > log 2 + B_{q1}(n)+B_{q2}(n)+B_{q3}(n) ==> R_k(n) > 0
 
+Both criteria are taken over the common Euler product W_n = prod_{p nmid n}
+(1 - 1/(p(p-1))) >= C_Artin, which is the sharp common factor: R_m/n and B_q/n
+have main terms (prod_{q|m} lambda_q) W_n and (1 - lambda_q) W_n respectively.
+
 For each k this script reports the better threshold of the two, and (with
 --certify) a directed-rounding certificate proving R_k(n) > 0 at that threshold.
 
@@ -102,7 +106,7 @@ def Bq_error(q, n, ctx, A=None, c1=None, c2=None, Z1=None, Z2=None):
     if c1 is None:
         c1 = int(floor(sqrt(MAX_TABLE_MOD / q)))
     if c2 is None:
-        c2 = c1 // q
+        c2 = int(floor(sqrt(MAX_TABLE_MOD))) // q
     if Z1 is None:
         Z1 = Z
     if Z2 is None:
@@ -166,11 +170,34 @@ def R_lower(m, n, ctx):
     return beta * C_ARTIN, r["bound"]
 
 
+# --- margin coefficients -------------------------------------------------
+# Both main terms are exactly proportional to the SAME Euler product
+#     W_n = prod_{p nmid n} (1 - 1/(p(p-1))),
+# since  R_m/n ~ (prod_{q|m} lambda_q) W_n  and  B_q/n ~ (1 - lambda_q) W_n
+# (the identity (q-2)/(q-1) = lambda_q (1 - 1/(q(q-1))) converts the stated
+# forms of Prop 4.1 and Prop 4.3 into these).  The difference therefore carries
+# W_n as a common factor, and W_n >= C_Artin is sharp (equality at n = 1).
+#
+# Writing the same difference over P_k(n) = prod_{p nmid kn} and using
+# P_k >= C_Artin is the SAME algebra with a weaker constant: it discards
+# prod_{q|k}(1 - 1/(q(q-1))), which is 0.7728 at k = 105.  That is what this
+# script did previously; those thresholds were valid but not tight.
+
+
+def split_margin_coef(q1, q2, q3):
+    """R_{q1q2} - B_{q3} main term, in units of W_n."""
+    return beta_coeff([q1, q2]) - (1.0 - beta_coeff([q3]))
+
+
+def comparison_margin_coef(q1, q2, q3):
+    """R - B_{q1} - B_{q2} - B_{q3} main term, in units of W_n."""
+    return 1.0 - sum(1.0 - beta_coeff([q]) for q in (q1, q2, q3))
+
+
 def split_terms(q1, q2, q3, n, ctx):
     G, Rb = R_lower(q1 * q2, n, ctx)
     B = Bq_error(q3, n, ctx)
-    coef = (((q1 - 2) / (q1 - 1)) * ((q2 - 2) / (q2 - 1)) * (1 - 1.0 / (q3 * (q3 - 1)))
-            - (1.0 / q3) * (1 - 1.0 / (q1 * (q1 - 1))) * (1 - 1.0 / (q2 * (q2 - 1))))
+    coef = split_margin_coef(q1, q2, q3)
     margin = coef * C_ARTIN
     E = (G - Rb) + B["err"]
     slack = margin - E - math.log(2) / n
@@ -181,11 +208,8 @@ def rcomp_terms(q1, q2, q3, n, ctx):
     _, R_bound = R_lower(1, n, ctx)
     E_R = C_ARTIN - R_bound
     Bs = {q: Bq_error(q, n, ctx) for q in (q1, q2, q3)}
-    fR = one_minus(q1) * one_minus(q2) * one_minus(q3)
-    fB = ((1.0 / q1) * one_minus(q2) * one_minus(q3)
-          + (1.0 / q2) * one_minus(q1) * one_minus(q3)
-          + (1.0 / q3) * one_minus(q1) * one_minus(q2))
-    margin = (fR - fB) * C_ARTIN
+    ccoef = comparison_margin_coef(q1, q2, q3)
+    margin = ccoef * C_ARTIN
     E = E_R + sum(Bs[q]["err"] for q in (q1, q2, q3))
     slack = margin - E - math.log(2) / n
     return slack, {"E_R": E_R, "sumB": sum(Bs[q]["err"] for q in (q1, q2, q3)),
@@ -235,16 +259,12 @@ def certify(k, n, ctx):
     q1, q2, q3 = factor_squarefree(k)
     G, Rb = R_lower(q1 * q2, n, ctx)
     Bsub = Bq_error(q3, n, ctx)
-    coef = (((q1 - 2) / (q1 - 1)) * ((q2 - 2) / (q2 - 1)) * (1 - 1.0 / (q3 * (q3 - 1)))
-            - (1.0 / q3) * (1 - 1.0 / (q1 * (q1 - 1))) * (1 - 1.0 / (q2 * (q2 - 1))))
+    coef = split_margin_coef(q1, q2, q3)
     s_slack = _down(coef * C_ARTIN) - _up(G - Rb) - _up(Bsub["err"]) - _up(math.log(2) / n)
     _, R_bound = R_lower(1, n, ctx)
     Bs = {q: Bq_error(q, n, ctx) for q in (q1, q2, q3)}
-    fR = one_minus(q1) * one_minus(q2) * one_minus(q3)
-    fB = ((1.0 / q1) * one_minus(q2) * one_minus(q3)
-          + (1.0 / q2) * one_minus(q1) * one_minus(q3)
-          + (1.0 / q3) * one_minus(q1) * one_minus(q2))
-    c_slack = (_down((fR - fB) * C_ARTIN) - _up(C_ARTIN - R_bound)
+    ccoef = comparison_margin_coef(q1, q2, q3)
+    c_slack = (_down(ccoef * C_ARTIN) - _up(C_ARTIN - R_bound)
                - _up(sum(Bs[q]["err"] for q in (q1, q2, q3))) - _up(math.log(2) / n))
     which = "split" if s_slack >= c_slack else "comparison"
     slack = max(s_slack, c_slack)
@@ -252,7 +272,7 @@ def certify(k, n, ctx):
             "split": {"margin_down": str(_down(coef * C_ARTIN)), "E_R_up": str(_up(G - Rb)),
                       "E_B_up": str(_up(Bsub["err"])), "slack": str(s_slack),
                       "Bq_terms": {kk: Bsub[kk] for kk in ("c1", "c2", "A", "E_short", "endpoint", "E_med", "E_large", "err")}},
-            "comparison": {"margin_down": str(_down((fR - fB) * C_ARTIN)),
+            "comparison": {"margin_down": str(_down(ccoef * C_ARTIN)),
                            "E_R_up": str(_up(C_ARTIN - R_bound)),
                            "sumB_up": str(_up(sum(Bs[q]["err"] for q in (q1, q2, q3)))),
                            "slack": str(c_slack),
