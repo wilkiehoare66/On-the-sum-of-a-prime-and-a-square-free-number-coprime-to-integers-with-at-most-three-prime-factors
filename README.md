@@ -1,8 +1,8 @@
-# On the sum of a prime and a square-free number coprime to a fixed modulus with at most three distinct prime factors
+# On the sum of a prime and a square-free number coprime to integers with at most three prime factors
 
 Code and data for the computational parts of the paper
 
-> **On the sum of a prime and a square-free number coprime to a fixed modulus with at most three distinct prime factors**
+> **On the sum of a prime and a square-free number coprime to integers with at most three prime factors**
 > W. Hoare, E. Lee, and A. Pearce-Crump.
 
 **Authorship and results of record.** The programs here accompany the manuscript
@@ -154,7 +154,7 @@ and re-checks that every slack is positive. It exits nonzero if any record fails
 | Quantity | Command | Paper |
 | --- | --- | --- |
 | `R_15(n)/n ≥ 0.09527` | `python3 ComputeRkBound.py --k 15` | Cor. 4.2 |
-| `R(n)/n` error at `k=1` | `python3 ComputeRkBound.py --k 1` | §4.4 |
+| `R(n)/n` error at `k=1` | `python3 ComputeRkBound.py --k 1` | Prop. 4.1 at `k=1` |
 | `B_13` error | `python3 ComputeBqBound.py --bq 13` | §4 example |
 | `k = 105` threshold `≈ 1.23·10¹¹` | `python3 ComputeBqBound.py --k 105 --certify` | Table 2 |
 | all twenty rows certified | `python3 make_certificates.py && python3 verify_certificate.py` | Table 2 |
